@@ -1,0 +1,6 @@
+{
+  "name": "Satuna Ajar",
+  "description": "Ruang kerja digital untuk membantu guru menyiapkan RPP, Modul Ajar, asesmen, dan perangkat pembelajaran.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

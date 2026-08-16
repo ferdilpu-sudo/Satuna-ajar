@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+:root {
+  --app-bg: #f4f6f2;
+  --surface: #ffffff;
+  --surface-muted: #f8faf7;
+  --border: #dde3dc;
+  --text: #172018;
+  --muted: #66706a;
+  --primary: #2563eb;
+}
+
+html {
+  background: var(--app-bg);
+}
+
+body {
+  margin: 0;
+  background: var(--app-bg);
+  color: var(--text);
+}
+
+::selection {
+  background: #dbeafe;
+  color: #172018;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.2);
+  outline-offset: 2px;
+}
