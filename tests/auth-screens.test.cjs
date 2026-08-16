@@ -11,6 +11,15 @@ test('login dan daftar tersedia sebagai route auth terpisah dari app shell', () 
   assert.match(read('app/(auth)/daftar/page.tsx'), /Buat akun guru Anda/);
 });
 
+test('login memakai layout compact agar muat pada viewport desktop', () => {
+  const loginPage = read('app/(auth)/login/page.tsx');
+  const shell = read('components/auth/AuthShell.tsx');
+  const loginForm = read('components/auth/LoginForm.tsx');
+  assert.match(loginPage, /compact/);
+  assert.match(shell, /compact \? 'lg:py-6'/);
+  assert.match(loginForm, /className="space-y-4"/);
+});
+
 test('auth screen memakai Satuna Ajar dan benefit khusus pekerjaan guru', () => {
   const shell = read('components/auth/AuthShell.tsx');
   assert.match(shell, /Satuna Ajar membantu guru/);

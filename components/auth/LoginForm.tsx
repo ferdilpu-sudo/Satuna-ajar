@@ -73,7 +73,7 @@ export default function LoginForm() {
   };
 
   return (
-    <form onSubmit={submit} className="space-y-5" noValidate>
+    <form onSubmit={submit} className="space-y-4" noValidate>
       <button type="button" disabled={loading} onClick={googleLogin} className="flex min-h-12 w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60">
         <GoogleMark />Lanjutkan dengan Google
       </button>
