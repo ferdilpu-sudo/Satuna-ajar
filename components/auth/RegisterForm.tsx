@@ -78,7 +78,7 @@ export default function RegisterForm() {
 
   return (
     <form onSubmit={submit} className="space-y-4.5" noValidate>
-      <div className="rounded-xl border border-emerald-100 bg-emerald-50 px-3.5 py-3 text-xs leading-5 text-emerald-800"><strong className="font-extrabold">Mulai gratis:</strong> 3 pembuatan dokumen AI untuk mencoba Satuna Ajar.</div>
+      <div className="rounded-xl border border-emerald-100 bg-emerald-50 px-3.5 py-3 text-xs leading-5 text-emerald-800"><strong className="font-extrabold">Coba gratis</strong> · Buat hingga 3 dokumen dengan AI.</div>
       <button type="button" disabled={loading} onClick={googleRegister} className="flex min-h-12 w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"><GoogleMark />Daftar dengan Google</button>
       <div className="flex items-center gap-3" aria-hidden="true"><span className="h-px flex-1 bg-slate-200" /><span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">atau dengan email</span><span className="h-px flex-1 bg-slate-200" /></div>
       <AuthField id="register-name" name="name" type="text" autoComplete="name" label="Nama lengkap" placeholder="Nama Anda" icon={<UserRound className="h-[18px] w-[18px]" />} error={errors.name} />

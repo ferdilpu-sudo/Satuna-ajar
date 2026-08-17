@@ -20,8 +20,8 @@ const BENEFITS = [
   },
   {
     icon: Sparkles,
-    title: 'AI yang tetap bisa Anda kendalikan',
-    description: 'Tinjau, sunting, dan ekspor hasil tanpa kehilangan kendali sebagai guru.',
+    title: 'AI yang tetap dalam kendali Anda',
+    description: 'Tinjau dan sunting hasilnya sebelum digunakan. Anda tetap memegang keputusan akhir.',
   },
   {
     icon: ShieldCheck,
@@ -96,9 +96,6 @@ export default function AuthShell({ eyebrow, title, description, children, compa
             <div className={compact ? 'mt-5' : 'mt-7'}>{children}</div>
           </div>
 
-          <p className={`text-center text-xs leading-5 text-slate-400 ${compact ? 'mt-3' : 'mt-6'}`}>
-            Dengan menggunakan Satuna Ajar, Anda membantu kami menjaga ruang kerja guru tetap aman dan nyaman digunakan.
-          </p>
         </div>
       </section>
     </main>

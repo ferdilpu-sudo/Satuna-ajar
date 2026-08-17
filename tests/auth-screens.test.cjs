@@ -8,7 +8,7 @@ const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
 
 test('login dan daftar tersedia sebagai route auth terpisah dari app shell', () => {
   assert.match(read('app/(auth)/login/page.tsx'), /Masuk ke ruang kerja Anda/);
-  assert.match(read('app/(auth)/daftar/page.tsx'), /Buat akun guru Anda/);
+  assert.match(read('app/(auth)/daftar/page.tsx'), /Buat akun Satuna Ajar/);
 });
 
 test('login memakai layout compact agar muat pada viewport desktop', () => {
@@ -27,6 +27,18 @@ test('auth screen memakai Satuna Ajar dan benefit khusus pekerjaan guru', () => 
   assert.match(shell, /Kurikulum Merdeka/);
 });
 
+
+test('copy auth berbicara dalam bahasa manfaat yang lebih natural', () => {
+  const registerPage = read('app/(auth)/daftar/page.tsx');
+  const register = read('components/auth/RegisterForm.tsx');
+  const shell = read('components/auth/AuthShell.tsx');
+  assert.match(registerPage, /Simpan perangkat ajar Anda dengan aman/);
+  assert.match(register, /Coba gratis/);
+  assert.match(shell, /AI yang tetap dalam kendali Anda/);
+  assert.match(shell, /Anda tetap memegang keputusan akhir/);
+  assert.doesNotMatch(shell, /Anda membantu kami menjaga ruang kerja guru/);
+});
+
 test('login terhubung ke Google OAuth dan email password Supabase', () => {
   const login = read('components/auth/LoginForm.tsx');
   assert.match(login, /signInWithOAuth/);
@@ -42,7 +54,7 @@ test('registration terhubung ke signup Supabase dengan metadata nama', () => {
   assert.match(register, /signUp/);
   assert.match(register, /full_name: name/);
   assert.match(register, /emailRedirectTo/);
-  assert.match(register, /3 pembuatan dokumen AI/);
+  assert.match(register, /Buat hingga 3 dokumen dengan AI/);
   assert.match(register, /href="\/login"/);
 });
 

@@ -12,8 +12,8 @@ export default function RegisterPage() {
   return (
     <AuthShell
       eyebrow="Mulai dengan Satuna Ajar"
-      title="Buat akun guru Anda"
-      description="Buat akun untuk mengamankan akses, kuota, dan identitas Satuna Ajar Anda."
+      title="Buat akun Satuna Ajar"
+      description="Simpan perangkat ajar Anda dengan aman dan lanjutkan pekerjaan kapan saja."
     >
       <RegisterForm />
     </AuthShell>
