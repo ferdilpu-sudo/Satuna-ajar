@@ -14,6 +14,7 @@ Satuna memakai payment core provider-agnostic. iPaymu dan Midtrans menjadi adapt
 - Refund mencabut entitlement one-time tersisa dan membatalkan subscription terkait order.
 - Pipeline generate memakai urutan akses: trial -> saldo one-time -> subscription berkuota.
 - Generate berbayar yang gagal mengembalikan saldo one-time; reservation subscription gagal tidak dihitung ke quota periode.
+- Satuna Pro Bulanan berharga Rp59.000 dengan kuota 20 generate AI per periode bulanan.
 - Adapter iPaymu/Midtrans belum diaktifkan selama akun merchant masih review.
 
 ## Environment
@@ -39,13 +40,14 @@ Jalankan migration berikut setelah migration katalog produk:
 ```text
 supabase/migrations/20260817113600_payment_core.sql
 supabase/migrations/20260817113700_generation_access_rpc.sql
+supabase/migrations/20260817113800_set_pro_monthly_generation_quota.sql
 ```
 
 `20260817113600_payment_core.sql` menambahkan `checkout_orders`, relasi order ke `payments`/`subscriptions`, public read policy untuk katalog aktif, RPC pembuatan order, RPC assignment provider, dan RPC finalisasi webhook atomik.
 
 `20260817113700_generation_access_rpc.sql` menambahkan reservation/finalization untuk penggunaan berbayar. Saldo one-time selalu dipakai sebelum quota subscription. Subscription hanya menjadi sumber generate jika plan memiliki `generation_quota > 0` dan periodenya masih aktif.
 
-Satuna Pro saat ini memiliki `generation_quota = null`, sehingga **tidak dianggap unlimited** dan belum menjadi sumber generate. Kuota Pro harus diputuskan secara eksplisit sebelum akses AI subscription diaktifkan.
+`20260817113800_set_pro_monthly_generation_quota.sql` menetapkan `generation_quota = 20` pada plan `pro-monthly`. Artinya subscription Pro aktif dapat menjadi sumber generate setelah trial dan saldo one-time habis, maksimal 20 generate pada setiap periode subscription.
 
 ## Generation access flow
 
