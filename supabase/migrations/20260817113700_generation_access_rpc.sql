@@ -65,7 +65,7 @@ begin
     and used_uses < total_uses
     and (expires_at is null or expires_at > now())
   order by expires_at asc nulls last, created_at asc
-  for update skip locked
+  for update
   limit 1;
 
   if found then
