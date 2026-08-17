@@ -4,9 +4,9 @@ const fs = require('node:fs');
 
 function read(path) { return fs.readFileSync(path, 'utf8'); }
 
-test('merchant verification pages are public in auth middleware', () => {
+test('merchant verification pages and billing catalog are public', () => {
   const middleware = read('lib/supabase/middleware.ts');
-  for (const path of ['/pricing', '/syarat-ketentuan', '/kebijakan-refund', '/kebijakan-privasi', '/faq', '/kontak']) {
+  for (const path of ['/pricing', '/syarat-ketentuan', '/kebijakan-refund', '/kebijakan-privasi', '/faq', '/kontak', '/api/billing/plans']) {
     assert.match(middleware, new RegExp(path.replace('/', '\\/')));
   }
 });
@@ -19,15 +19,12 @@ test('required merchant policy pages exist with business-specific content', () =
   assert.match(read('app/kontak/page.tsx'), /Kontak resmi/);
 });
 
-test('pricing publishes five approved Satuna offerings', () => {
+test('pricing reads its products and prices from the billing catalog', () => {
   const pricing = read('app/pricing/page.tsx');
-  assert.match(pricing, /1x Generate AI/);
-  assert.match(pricing, /price: 7_000/);
-  assert.match(pricing, /price: 15_000/);
-  assert.match(pricing, /price: 25_000/);
-  assert.match(pricing, /price: 35_000/);
-  assert.match(pricing, /Satuna Pro Bulanan/);
-  assert.match(pricing, /price: 59_000/);
+  assert.match(pricing, /listPublicPlans/);
+  assert.match(pricing, /offer\.priceAmount/);
+  assert.doesNotMatch(pricing, /price:\s*7_000/);
+  assert.doesNotMatch(pricing, /price:\s*59_000/);
 });
 
 test('bulk generation plans are seeded with matching quotas and prices', () => {
