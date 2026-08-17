@@ -11,14 +11,16 @@ test('login dan daftar tersedia sebagai route auth terpisah dari app shell', () 
   assert.match(read('app/(auth)/daftar/page.tsx'), /Buat akun Satuna Ajar/);
 });
 
-test('login memakai layout compact agar muat pada viewport desktop', () => {
+test('login memakai fit-to-viewport yang sama dengan daftar pada desktop', () => {
   const loginPage = read('app/(auth)/login/page.tsx');
   const shell = read('components/auth/AuthShell.tsx');
-  const loginForm = read('components/auth/LoginForm.tsx');
-  assert.match(loginPage, /compact/);
+  const globals = read('app/globals.css');
+  assert.match(loginPage, /fitViewport/);
+  assert.doesNotMatch(loginPage, /\scompact\s/);
   assert.match(shell, /const dense = compact \|\| fitViewport/);
-  assert.match(shell, /dense \? 'lg:py-6'/);
-  assert.match(loginForm, /className="space-y-4"/);
+  assert.match(shell, /auth-shell--fit-viewport/);
+  assert.match(globals, /height: 100dvh/);
+  assert.match(globals, /overflow: hidden/);
 });
 
 

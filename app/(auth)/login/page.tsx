@@ -14,7 +14,7 @@ export default function LoginPage() {
       eyebrow="Selamat datang kembali"
       title="Masuk ke ruang kerja Anda"
       description="Lanjutkan perangkat ajar, asesmen, dan dokumen pembelajaran yang sudah Anda siapkan."
-      compact
+      fitViewport
     >
       <LoginForm />
     </AuthShell>
