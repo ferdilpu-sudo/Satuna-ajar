@@ -19,9 +19,19 @@ test('required merchant policy pages exist with business-specific content', () =
   assert.match(read('app/kontak/page.tsx'), /Kontak resmi/);
 });
 
-test('pricing page never invents a price when env is unset', () => {
+test('pricing publishes the approved bulk generation packages', () => {
   const pricing = read('app/pricing/page.tsx');
-  assert.match(pricing, /NEXT_PUBLIC_PRICE_ONE_TIME/);
-  assert.match(pricing, /NEXT_PUBLIC_PRICE_PRO_MONTHLY/);
-  assert.match(pricing, /Harga belum ditetapkan/);
+  assert.match(pricing, /1x Generate AI/);
+  assert.match(pricing, /price: 7_000/);
+  assert.match(pricing, /price: 15_000/);
+  assert.match(pricing, /price: 25_000/);
+  assert.match(pricing, /price: 35_000/);
+});
+
+test('bulk generation plans are seeded with matching quotas and prices', () => {
+  const migration = read('supabase/migrations/20260817113400_seed_bulk_generation_plans.sql');
+  assert.match(migration, /'generate-1'.*7000.*1/s);
+  assert.match(migration, /'generate-3'.*15000.*3/s);
+  assert.match(migration, /'generate-5'.*25000.*5/s);
+  assert.match(migration, /'generate-10'.*35000.*10/s);
 });
