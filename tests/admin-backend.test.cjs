@@ -19,6 +19,15 @@ test('admin API returns explicit auth and authorization failures', () => {
   assert.match(route, /getAdminOverviewMetrics/);
 });
 
+test('admin overview frontend loads protected live metrics', () => {
+  const view = read('components/admin/views/OverviewView.tsx');
+  assert.match(view, /fetch\('\/api\/admin\/overview'/);
+  assert.match(view, /cache: 'no-store'/);
+  assert.match(view, /metrics\.monthRevenue/);
+  assert.match(view, /metrics\.monthOneTimeRevenue/);
+  assert.match(view, /metrics\.aiCost30d/);
+});
+
 test('monetization schema includes subscription and one-time ownership', () => {
   const migration = read('supabase/migrations/20260817113000_admin_monetization_foundation.sql');
   assert.match(migration, /create table if not exists public\.subscriptions/);
