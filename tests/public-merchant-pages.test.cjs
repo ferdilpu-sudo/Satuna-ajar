@@ -27,6 +27,12 @@ test('pricing reads its products and prices from the billing catalog', () => {
   assert.doesNotMatch(pricing, /price:\s*59_000/);
 });
 
+test('pricing explains the Satuna Pro monthly generation allowance', () => {
+  const pricing = read('app/pricing/page.tsx');
+  assert.match(pricing, /20 kali generate AI/);
+  assert.match(pricing, /offer\.generationQuota/);
+});
+
 test('bulk generation plans are seeded with matching quotas and prices', () => {
   const migration = read('supabase/migrations/20260817113400_seed_bulk_generation_plans.sql');
   assert.match(migration, /'generate-1'.*7000.*1/s);
@@ -41,4 +47,11 @@ test('Satuna Pro monthly plan is seeded at Rp59.000', () => {
   assert.match(migration, /'Satuna Pro Bulanan'/);
   assert.match(migration, /59000/);
   assert.match(migration, /'month'/);
+});
+
+test('Satuna Pro monthly quota is set to 20 generations by forward migration', () => {
+  const migration = read('supabase/migrations/20260817113800_set_pro_monthly_generation_quota.sql');
+  assert.match(migration, /generation_quota = 20/);
+  assert.match(migration, /code = 'pro-monthly'/);
+  assert.match(migration, /PRO_MONTHLY_PLAN_NOT_FOUND/);
 });
