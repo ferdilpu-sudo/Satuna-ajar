@@ -1,15 +1,5 @@
+import type { AdminOverviewMetrics } from '@/types/admin';
 import { createClient } from '@/lib/supabase/server';
-
-export interface AdminOverviewMetrics {
-  totalUsers: number;
-  activeSubscriptions: number;
-  monthRevenue: number;
-  monthOneTimeRevenue: number;
-  mrr: number;
-  generations30d: number;
-  failedGenerations30d: number;
-  aiCost30d: number;
-}
 
 const EMPTY_METRICS: AdminOverviewMetrics = {
   totalUsers: 0,
