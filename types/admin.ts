@@ -9,6 +9,17 @@ export interface AdminMetric {
   helper: string;
 }
 
+export interface AdminOverviewMetrics {
+  totalUsers: number;
+  activeSubscriptions: number;
+  monthRevenue: number;
+  monthOneTimeRevenue: number;
+  mrr: number;
+  generations30d: number;
+  failedGenerations30d: number;
+  aiCost30d: number;
+}
+
 export interface RevenuePoint {
   label: string;
   revenue: number;
