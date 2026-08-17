@@ -1,19 +1,6 @@
 import 'server-only';
 import { createAdminClient } from '@/lib/supabase/admin';
-import type { OneTimePurchaseRow, PaymentRow, SubscriptionRow } from '@/types/admin';
-
-export interface AdminCommerceData {
-  activeSubscriptions: number;
-  oneTimeTransactions30d: number;
-  oneTimeBuyers30d: number;
-  unusedGenerationRights: number;
-  monthRevenue: number;
-  recurringRevenue: number;
-  oneTimeRevenue: number;
-  subscriptions: SubscriptionRow[];
-  oneTimePurchases: OneTimePurchaseRow[];
-  payments: PaymentRow[];
-}
+import type { AdminCommerceData, OneTimePurchaseRow, PaymentRow, SubscriptionRow } from '@/types/admin';
 
 export async function getAdminCommerce(): Promise<AdminCommerceData> {
   const supabase = createAdminClient();
