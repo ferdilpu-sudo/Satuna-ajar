@@ -1,3 +1,4 @@
+import 'server-only';
 import type { PaymentProviderName } from '@/types/payment';
 
 export function getConfiguredPaymentProvider(): PaymentProviderName | null {
