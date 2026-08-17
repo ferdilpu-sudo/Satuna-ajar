@@ -19,13 +19,15 @@ test('required merchant policy pages exist with business-specific content', () =
   assert.match(read('app/kontak/page.tsx'), /Kontak resmi/);
 });
 
-test('pricing publishes the approved bulk generation packages', () => {
+test('pricing publishes five approved Satuna offerings', () => {
   const pricing = read('app/pricing/page.tsx');
   assert.match(pricing, /1x Generate AI/);
   assert.match(pricing, /price: 7_000/);
   assert.match(pricing, /price: 15_000/);
   assert.match(pricing, /price: 25_000/);
   assert.match(pricing, /price: 35_000/);
+  assert.match(pricing, /Satuna Pro Bulanan/);
+  assert.match(pricing, /price: 59_000/);
 });
 
 test('bulk generation plans are seeded with matching quotas and prices', () => {
@@ -34,4 +36,12 @@ test('bulk generation plans are seeded with matching quotas and prices', () => {
   assert.match(migration, /'generate-3'.*15000.*3/s);
   assert.match(migration, /'generate-5'.*25000.*5/s);
   assert.match(migration, /'generate-10'.*35000.*10/s);
+});
+
+test('Satuna Pro monthly plan is seeded at Rp59.000', () => {
+  const migration = read('supabase/migrations/20260817113500_seed_satuna_pro_monthly.sql');
+  assert.match(migration, /'pro-monthly'/);
+  assert.match(migration, /'Satuna Pro Bulanan'/);
+  assert.match(migration, /59000/);
+  assert.match(migration, /'month'/);
 });
