@@ -20,6 +20,21 @@ test('login memakai layout compact agar muat pada viewport desktop', () => {
   assert.match(loginForm, /className="space-y-4"/);
 });
 
+
+
+test('registration memakai fit-to-viewport pada desktop pendek', () => {
+  const registerPage = read('app/(auth)/daftar/page.tsx');
+  const shell = read('components/auth/AuthShell.tsx');
+  const register = read('components/auth/RegisterForm.tsx');
+  const globals = read('app/globals.css');
+  assert.match(registerPage, /fitViewport/);
+  assert.match(shell, /auth-shell--fit-viewport/);
+  assert.match(register, /register-form flex flex-col/);
+  assert.match(globals, /max-height: 900px/);
+  assert.match(globals, /max-height: 760px/);
+  assert.match(globals, /register-form-trial/);
+});
+
 test('auth screen memakai Satuna Ajar dan benefit khusus pekerjaan guru', () => {
   const shell = read('components/auth/AuthShell.tsx');
   assert.match(shell, /Satuna Ajar membantu guru/);
