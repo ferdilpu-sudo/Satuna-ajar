@@ -41,3 +41,105 @@ textarea:focus-visible {
   outline: 3px solid rgba(37, 99, 235, 0.2);
   outline-offset: 2px;
 }
+
+/* Keep the registration task within a typical desktop viewport without shrinking touch targets. */
+@media (min-width: 1024px) and (max-height: 900px) {
+  .auth-shell--fit-viewport .auth-shell-left {
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+  }
+
+  .auth-shell--fit-viewport .auth-shell-left-content {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .auth-shell--fit-viewport .auth-shell-heading {
+    margin-top: 1rem;
+    font-size: 2.375rem;
+  }
+
+  .auth-shell--fit-viewport .auth-shell-description {
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.5rem;
+  }
+
+  .auth-shell--fit-viewport .auth-shell-benefits {
+    margin-top: 1rem;
+  }
+
+  .auth-shell--fit-viewport .auth-shell-benefit {
+    gap: 0.75rem;
+    padding: 0.625rem 0.75rem;
+  }
+
+  .auth-shell--fit-viewport .auth-shell-benefit-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .auth-shell--fit-viewport .auth-shell-benefit-title {
+    font-size: 0.8125rem;
+  }
+
+  .auth-shell--fit-viewport .auth-shell-benefit-description {
+    margin-top: 0.125rem;
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+
+  .auth-shell--fit-viewport .auth-shell-right {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .auth-shell--fit-viewport .auth-shell-card {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .auth-shell--fit-viewport .auth-shell-card-title {
+    margin-top: 0.375rem;
+    font-size: 1.5rem;
+  }
+
+  .auth-shell--fit-viewport .auth-shell-card-description {
+    margin-top: 0.375rem;
+    line-height: 1.25rem;
+  }
+
+  .auth-shell--fit-viewport .auth-shell-card-content {
+    margin-top: 1rem;
+  }
+
+  .auth-shell--fit-viewport .register-form {
+    gap: 0.75rem;
+  }
+
+  .auth-shell--fit-viewport .register-form-trial {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .auth-shell--fit-viewport .register-form-divider {
+    min-height: 1rem;
+  }
+
+  .auth-shell--fit-viewport .register-form-terms label {
+    line-height: 1rem;
+  }
+
+  .auth-shell--fit-viewport .register-form-login {
+    line-height: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 760px) {
+  .auth-shell--fit-viewport .auth-shell-footer {
+    display: none;
+  }
+
+  .auth-shell--fit-viewport .auth-shell-benefit:last-child {
+    display: none;
+  }
+}

@@ -14,6 +14,7 @@ export default function RegisterPage() {
       eyebrow="Mulai dengan Satuna Ajar"
       title="Buat akun Satuna Ajar"
       description="Simpan perangkat ajar Anda dengan aman dan lanjutkan pekerjaan kapan saja."
+      fitViewport
     >
       <RegisterForm />
     </AuthShell>
