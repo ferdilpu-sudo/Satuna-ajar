@@ -12,6 +12,8 @@ Satuna memakai payment core provider-agnostic. iPaymu dan Midtrans menjadi adapt
 - Payment sukses membuat entitlement one-time sesuai `generation_quota` plan.
 - Payment subscription sukses membuat subscription aktif dengan periode terbatas.
 - Refund mencabut entitlement one-time tersisa dan membatalkan subscription terkait order.
+- Pipeline generate memakai urutan akses: trial -> saldo one-time -> subscription berkuota.
+- Generate berbayar yang gagal mengembalikan saldo one-time; reservation subscription gagal tidak dihitung ke quota periode.
 - Adapter iPaymu/Midtrans belum diaktifkan selama akun merchant masih review.
 
 ## Environment
@@ -36,13 +38,33 @@ Jalankan migration berikut setelah migration katalog produk:
 
 ```text
 supabase/migrations/20260817113600_payment_core.sql
+supabase/migrations/20260817113700_generation_access_rpc.sql
 ```
 
-Migration ini menambahkan `checkout_orders`, relasi order ke `payments`/`subscriptions`, public read policy untuk katalog aktif, RPC pembuatan order, RPC assignment provider, dan RPC finalisasi webhook atomik.
+`20260817113600_payment_core.sql` menambahkan `checkout_orders`, relasi order ke `payments`/`subscriptions`, public read policy untuk katalog aktif, RPC pembuatan order, RPC assignment provider, dan RPC finalisasi webhook atomik.
+
+`20260817113700_generation_access_rpc.sql` menambahkan reservation/finalization untuk penggunaan berbayar. Saldo one-time selalu dipakai sebelum quota subscription. Subscription hanya menjadi sumber generate jika plan memiliki `generation_quota > 0` dan periodenya masih aktif.
+
+Satuna Pro saat ini memiliki `generation_quota = null`, sehingga **tidak dianggap unlimited** dan belum menjadi sumber generate. Kuota Pro harus diputuskan secara eksplisit sebelum akses AI subscription diaktifkan.
+
+## Generation access flow
+
+```text
+request generate
+  -> rate limit + trial
+  -> trial tersedia: gunakan trial
+  -> trial habis: reserve saldo one-time
+  -> saldo one-time habis: cek subscription aktif dengan quota > 0
+  -> tidak ada akses: HTTP 402 GENERATION_BALANCE_EXHAUSTED
+```
+
+Jika proses AI gagal, reservation berbayar difinalisasi sebagai gagal. Untuk one-time, `used_uses` dikurangi kembali. Untuk subscription, usage berstatus `failed` tidak ikut dihitung pada quota periode.
 
 ## Security boundaries
 
 `create_checkout_order` hanya dapat dieksekusi role `authenticated` dan selalu mengambil harga dari `public.plans`. Client tidak pernah mengirim nominal yang dipercaya server.
+
+`reserve_paid_generation` dan `finalize_paid_generation` hanya bekerja untuk `auth.uid()` dari session pengguna. User tidak dapat memilih entitlement atau subscription milik user lain.
 
 `assign_checkout_provider` dan `finalize_checkout_payment` hanya dapat dieksekusi `service_role`. Signature webhook tetap harus diverifikasi oleh adapter provider sebelum event diberikan ke `finalizeVerifiedPayment()`.
 
