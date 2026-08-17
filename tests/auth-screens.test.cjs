@@ -47,7 +47,7 @@ test('registration memakai fit-to-viewport pada desktop pendek', () => {
 test('auth screen memakai Satuna Ajar dan benefit khusus pekerjaan guru', () => {
   const shell = read('components/auth/AuthShell.tsx');
   assert.match(shell, /Satuna Ajar membantu guru/);
-  assert.match(shell, /Perangkat ajar lebih cepat/);
+  assert.match(shell, /Siapkan perangkat ajar lebih cepat/);
   assert.match(shell, /Kurikulum Merdeka/);
 });
 
@@ -61,6 +61,16 @@ test('copy auth berbicara dalam bahasa manfaat yang lebih natural', () => {
   assert.match(shell, /AI yang tetap dalam kendali Anda/);
   assert.match(shell, /Anda tetap memegang keputusan akhir/);
   assert.doesNotMatch(shell, /Anda membantu kami menjaga ruang kerja guru/);
+});
+
+
+
+test('copy login dipoles agar natural dan tidak teknis', () => {
+  const loginPage = read('app/(auth)/login/page.tsx');
+  const login = read('components/auth/LoginForm.tsx');
+  assert.match(loginPage, /Lanjutkan pekerjaan Anda pada perangkat ajar/);
+  assert.match(login, /Sesi Anda disimpan dengan aman\./);
+  assert.doesNotMatch(login, /disimpan aman di cookie/);
 });
 
 test('login terhubung ke Google OAuth dan email password Supabase', () => {

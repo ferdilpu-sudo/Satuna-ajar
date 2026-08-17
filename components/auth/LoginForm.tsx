@@ -88,7 +88,7 @@ export default function LoginForm() {
       )} />
 
       <div className="flex items-center justify-between gap-4 text-xs">
-        <span className="font-medium text-slate-500">Sesi masuk disimpan aman di cookie.</span>
+        <span className="font-medium text-slate-500">Sesi Anda disimpan dengan aman.</span>
         <Link href="/lupa-kata-sandi" className="font-bold text-blue-600 hover:text-blue-700">Lupa kata sandi?</Link>
       </div>
 

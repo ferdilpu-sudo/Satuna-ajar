@@ -16,7 +16,7 @@ interface Props {
 const BENEFITS = [
   {
     icon: FileText,
-    title: 'Perangkat ajar lebih cepat',
+    title: 'Siapkan perangkat ajar lebih cepat',
     description: 'Susun RPP, Modul Ajar, asesmen, dan dokumen pembelajaran dari satu ruang kerja.',
   },
   {
