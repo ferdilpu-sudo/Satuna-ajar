@@ -14,6 +14,7 @@ const PUBLIC_PATHS = [
   '/kebijakan-privasi',
   '/faq',
   '/kontak',
+  '/api/billing/plans',
 ];
 
 function isPublicPath(pathname: string): boolean {
