@@ -1,7 +1,8 @@
 'use client';
 
+import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-import { AlertCircle, CheckCircle2, Loader2, RefreshCw, X } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Loader2, RefreshCw, ShoppingCart, X } from 'lucide-react';
 import StreamlineDuotoneIcon from './icons/StreamlineDuotoneIcon';
 
 interface GenerationProgressModalProps {
@@ -38,16 +39,14 @@ export default function GenerationProgressModal({
 
   if (isOpen !== prevIsOpen) {
     setPrevIsOpen(isOpen);
-    if (isOpen) {
-      setCurrentStepIndex(0);
-    }
+    if (isOpen) setCurrentStepIndex(0);
   }
 
   useEffect(() => {
     if (!isOpen || error) return;
     const interval = window.setInterval(
       () => setCurrentStepIndex((prev) => (prev < STEPS.length - 2 ? prev + 1 : prev)),
-      1800
+      1800,
     );
     return () => window.clearInterval(interval);
   }, [isOpen, error]);
@@ -56,26 +55,33 @@ export default function GenerationProgressModal({
 
   if (error) {
     const isTrialExhausted = errorCode === 'TRIAL_EXHAUSTED';
+    const isBalanceExhausted = errorCode === 'GENERATION_BALANCE_EXHAUSTED';
+    const isAccessExhausted = isTrialExhausted || isBalanceExhausted;
+
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 p-4 backdrop-blur-[2px]">
-        <div className={`w-full max-w-md space-y-5 rounded-2xl border bg-white p-6 text-center shadow-2xl ${isTrialExhausted || isQuota ? 'border-amber-200' : 'border-rose-200'}`}>
-          <div className={`mx-auto flex h-14 w-14 items-center justify-center rounded-2xl ${isQuota || isTrialExhausted ? 'bg-amber-50 text-amber-600' : 'bg-rose-50 text-rose-600'}`}>
+        <div className={`w-full max-w-md space-y-5 rounded-2xl border bg-white p-6 text-center shadow-2xl ${isAccessExhausted || isQuota ? 'border-amber-200' : 'border-rose-200'}`}>
+          <div className={`mx-auto flex h-14 w-14 items-center justify-center rounded-2xl ${isQuota || isAccessExhausted ? 'bg-amber-50 text-amber-600' : 'bg-rose-50 text-rose-600'}`}>
             <AlertCircle className="h-7 w-7" />
           </div>
           <div>
             <h3 className="text-lg font-extrabold text-slate-900">
-              {isTrialExhausted ? 'Trial Satuna Selesai' : isQuota ? 'Batas Kuota AI Tercapai' : 'Gagal Menyusun Dokumen'}
+              {isTrialExhausted
+                ? 'Trial Satuna Selesai'
+                : isBalanceExhausted
+                  ? 'Saldo Generate Habis'
+                  : isQuota
+                    ? 'Batas Kuota AI Tercapai'
+                    : 'Gagal Menyusun Dokumen'}
             </h3>
-            <p className="mt-2 text-xs leading-relaxed text-slate-600">
-              {error}
-            </p>
-            {isQuota && !isTrialExhausted && (
+            <p className="mt-2 text-xs leading-relaxed text-slate-600">{error}</p>
+            {isQuota && !isAccessExhausted && (
               <p className="mt-2 rounded-xl border border-amber-200 bg-amber-50/80 p-2.5 text-[11px] font-semibold text-amber-800">
                 💡 Lalu lintas layanan AI sedang padat. Silakan tunggu 1–2 menit sebelum menekan tombol Coba Lagi.
               </p>
             )}
           </div>
-          <div className="flex items-center justify-center gap-3 border-t border-[#E6EAE5] pt-4">
+          <div className="flex flex-wrap items-center justify-center gap-3 border-t border-[#E6EAE5] pt-4">
             {onClose && (
               <button
                 type="button"
@@ -85,7 +91,15 @@ export default function GenerationProgressModal({
                 <X className="h-4 w-4" /> Tutup
               </button>
             )}
-            {onRetry && !isTrialExhausted && (
+            {isAccessExhausted && (
+              <Link
+                href="/pricing"
+                className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-xl bg-blue-600 px-5 py-2 text-xs font-bold text-white hover:bg-blue-700"
+              >
+                <ShoppingCart className="h-4 w-4" /> Lihat Paket
+              </Link>
+            )}
+            {onRetry && !isAccessExhausted && (
               <button
                 type="button"
                 onClick={onRetry}
