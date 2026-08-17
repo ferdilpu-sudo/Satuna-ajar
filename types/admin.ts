@@ -68,6 +68,19 @@ export interface PaymentRow {
   item: string;
 }
 
+export interface AdminCommerceData {
+  activeSubscriptions: number;
+  oneTimeTransactions30d: number;
+  oneTimeBuyers30d: number;
+  unusedGenerationRights: number;
+  monthRevenue: number;
+  recurringRevenue: number;
+  oneTimeRevenue: number;
+  subscriptions: SubscriptionRow[];
+  oneTimePurchases: OneTimePurchaseRow[];
+  payments: PaymentRow[];
+}
+
 export interface SystemAlert {
   id: string;
   severity: 'critical' | 'warning' | 'info';
