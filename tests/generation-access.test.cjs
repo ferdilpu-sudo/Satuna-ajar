@@ -22,6 +22,12 @@ test('paid generation reservation prefers one-time balance before subscription q
   assert.match(migration, /coalesce\(p\.generation_quota, 0\) > 0/);
 });
 
+test('bulk reservation serializes on entitlement instead of skipping locked balance', () => {
+  const migration = read('supabase/migrations/20260817113700_generation_access_rpc.sql');
+  assert.match(migration, /order by expires_at asc nulls last, created_at asc\s+for update\s+limit 1/s);
+  assert.doesNotMatch(migration, /for update skip locked/i);
+});
+
 test('failed paid generation restores one-time balance and frees subscription quota', () => {
   const migration = read('supabase/migrations/20260817113700_generation_access_rpc.sql');
   assert.match(migration, /v_usage\.source = 'one_time'/);
