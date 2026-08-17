@@ -28,6 +28,14 @@ test('admin overview frontend loads protected live metrics', () => {
   assert.match(view, /metrics\.aiCost30d/);
 });
 
+test('admin accounts are excluded from user metrics', () => {
+  const migration = read('supabase/migrations/20260817113300_exclude_admin_from_user_metrics.sql');
+  assert.match(migration, /from auth\.users u/);
+  assert.match(migration, /not exists/);
+  assert.match(migration, /public\.admin_members am/);
+  assert.match(migration, /am\.is_active = true/);
+});
+
 test('monetization schema includes subscription and one-time ownership', () => {
   const migration = read('supabase/migrations/20260817113000_admin_monetization_foundation.sql');
   assert.match(migration, /create table if not exists public\.subscriptions/);
