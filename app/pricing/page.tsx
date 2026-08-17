@@ -10,7 +10,7 @@ const descriptions: Record<string, string> = {
   'generate-3': 'Tiga kali generate perangkat ajar untuk kebutuhan sesekali.',
   'generate-5': 'Lima kali generate perangkat ajar dengan harga lebih hemat.',
   'generate-10': 'Sepuluh kali generate perangkat ajar untuk penggunaan lebih rutin.',
-  'pro-monthly': 'Langganan Satuna Pro bulanan. Detail batas penggunaan AI akan ditampilkan sebelum checkout Pro diaktifkan.',
+  'pro-monthly': 'Langganan Satuna Pro bulanan dengan 20 kali generate AI pada setiap periode langganan.',
 };
 
 export default async function PricingPage() {
