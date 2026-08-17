@@ -82,6 +82,16 @@ test('login terhubung ke Google OAuth dan email password Supabase', () => {
   assert.match(login, /href="\/daftar"/);
 });
 
+
+
+test('login email menunggu session lalu memakai full navigation', () => {
+  const login = read('components/auth/LoginForm.tsx');
+  assert.match(login, /data: authData/);
+  assert.match(login, /authData\.session/);
+  assert.match(login, /window\.location\.replace\(next\)/);
+  assert.doesNotMatch(login, /router\.replace\(next\)/);
+});
+
 test('registration terhubung ke signup Supabase dengan metadata nama', () => {
   const register = read('components/auth/RegisterForm.tsx');
   assert.match(register, /signInWithOAuth/);

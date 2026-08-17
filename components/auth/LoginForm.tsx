@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { Eye, EyeOff, LockKeyhole, Mail } from 'lucide-react';
 import { FormEvent, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import AuthField from './AuthField';
 import GoogleMark from './GoogleMark';
 import { createClient } from '@/lib/supabase/client';
@@ -14,7 +13,6 @@ function safeNext(value: string | null): string {
 }
 
 export default function LoginForm() {
-  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [notice, setNotice] = useState('');
@@ -59,10 +57,19 @@ export default function LoginForm() {
     setNotice('');
     try {
       const supabase = createClient();
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) return setNotice(friendlyAuthError(error.message));
-      router.replace(next);
-      router.refresh();
+      const { data: authData, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        setNotice(friendlyAuthError(error.message));
+        return;
+      }
+      if (!authData.session) {
+        setNotice('Sesi masuk belum terbentuk. Silakan coba lagi.');
+        return;
+      }
+
+      // Gunakan navigasi penuh agar cookie Supabase sudah terbaca oleh middleware/server
+      // pada request berikutnya. Client-side router dapat mendahului sinkronisasi cookie.
+      window.location.replace(next);
     } catch (error) {
       setNotice(error instanceof Error && error.message === 'SUPABASE_NOT_CONFIGURED'
         ? 'Supabase belum dikonfigurasi. Isi environment autentikasi terlebih dahulu.'
