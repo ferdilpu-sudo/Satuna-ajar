@@ -88,7 +88,7 @@ export default function AuthShell({
       </section>
 
       <section className={`auth-shell-right flex min-h-screen items-center justify-center px-5 sm:px-8 lg:px-12 ${dense ? 'py-5 lg:py-4' : 'py-8'}`}>
-        <div className={`w-full ${dense ? 'max-w-[460px]' : 'max-w-[480px]'}`}>
+        <div className={`auth-shell-right-inner w-full ${dense ? 'max-w-[460px]' : 'max-w-[480px]'}`}>
           <div className="mb-8 flex items-center justify-between lg:hidden">
             <Link href="/" className="inline-flex items-center gap-2.5 rounded-xl">
               <SatunaMark className="h-10 w-10" />

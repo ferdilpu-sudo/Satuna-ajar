@@ -30,11 +30,15 @@ test('registration memakai fit-to-viewport pada desktop pendek', () => {
   const globals = read('app/globals.css');
   assert.match(registerPage, /fitViewport/);
   assert.match(shell, /auth-shell--fit-viewport/);
+  assert.match(shell, /auth-shell-right-inner/);
   assert.match(register, /register-form flex flex-col/);
   assert.match(shell, /const dense = compact \|\| fitViewport/);
   assert.match(globals, /height: 100dvh/);
   assert.match(globals, /overflow: hidden/);
+  assert.match(globals, /align-items: flex-start/);
+  assert.match(globals, /margin-block: auto/);
   assert.match(globals, /max-height: 760px/);
+  assert.match(globals, /register-form-oauth/);
   assert.match(globals, /register-form-trial/);
 });
 

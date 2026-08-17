@@ -42,7 +42,7 @@ textarea:focus-visible {
   outline-offset: 2px;
 }
 
-/* Registration is intentionally dense on desktop so the primary task fits one viewport. */
+/* Registration prioritizes a complete, readable form inside desktop viewports. */
 @media (min-width: 1024px) {
   .auth-shell--fit-viewport {
     height: 100dvh;
@@ -102,58 +102,72 @@ textarea:focus-visible {
     line-height: 0.95rem;
   }
 
+  /* Never vertically center an overflowing auth card: it clips the top edge. */
   .auth-shell--fit-viewport .auth-shell-right {
+    align-items: flex-start;
     overflow-y: auto;
     padding-top: 0.75rem;
     padding-bottom: 0.75rem;
   }
 
+  /* Auto block margins center the card only when it genuinely fits. */
+  .auth-shell--fit-viewport .auth-shell-right-inner {
+    margin-block: auto;
+    max-width: 27.5rem;
+  }
+
   .auth-shell--fit-viewport .auth-shell-card {
-    padding: 1.125rem 1.375rem;
+    border-radius: 1.375rem;
+    padding: 1rem 1.25rem;
   }
 
   .auth-shell--fit-viewport .auth-shell-card-title {
     margin-top: 0.25rem;
-    font-size: 1.45rem;
-    line-height: 1.15;
+    font-size: 1.4rem;
+    line-height: 1.12;
   }
 
   .auth-shell--fit-viewport .auth-shell-card-description {
     margin-top: 0.25rem;
     font-size: 0.8125rem;
-    line-height: 1.15rem;
-  }
-
-  .auth-shell--fit-viewport .auth-shell-card-content {
-    margin-top: 0.75rem;
-  }
-
-  .auth-shell--fit-viewport .register-form {
-    gap: 0.625rem;
-  }
-
-  .auth-shell--fit-viewport .register-form-trial {
-    padding-top: 0.4rem;
-    padding-bottom: 0.4rem;
     line-height: 1.125rem;
   }
 
+  .auth-shell--fit-viewport .auth-shell-card-content {
+    margin-top: 0.625rem;
+  }
+
+  .auth-shell--fit-viewport .register-form {
+    gap: 0.5rem;
+  }
+
+  .auth-shell--fit-viewport .register-form-trial {
+    padding-top: 0.325rem;
+    padding-bottom: 0.325rem;
+    line-height: 1rem;
+  }
+
+  .auth-shell--fit-viewport .register-form-oauth,
+  .auth-shell--fit-viewport .register-form-submit {
+    min-height: 2.75rem;
+  }
+
   .auth-shell--fit-viewport .register-form-divider {
-    min-height: 0.875rem;
+    min-height: 0.75rem;
   }
 
   .auth-shell--fit-viewport .register-form > label > span:first-child {
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.2rem;
     font-size: 0.75rem;
   }
 
   .auth-shell--fit-viewport .register-form > label > span:nth-child(2) {
-    min-height: 3rem;
+    min-height: 2.75rem;
   }
 
   .auth-shell--fit-viewport .register-form > label input {
-    padding-top: 0.625rem;
-    padding-bottom: 0.625rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
   }
 
   .auth-shell--fit-viewport .register-form-terms label {
@@ -163,7 +177,7 @@ textarea:focus-visible {
 
   .auth-shell--fit-viewport .register-form-login {
     font-size: 0.8125rem;
-    line-height: 1.125rem;
+    line-height: 1rem;
   }
 }
 
@@ -183,11 +197,12 @@ textarea:focus-visible {
   }
 
   .auth-shell--fit-viewport .auth-shell-card {
-    padding-top: 0.875rem;
-    padding-bottom: 0.875rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
   }
 
   .auth-shell--fit-viewport .register-form {
-    gap: 0.5rem;
+    gap: 0.425rem;
   }
 }
+
