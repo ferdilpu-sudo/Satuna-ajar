@@ -16,7 +16,8 @@ test('login memakai layout compact agar muat pada viewport desktop', () => {
   const shell = read('components/auth/AuthShell.tsx');
   const loginForm = read('components/auth/LoginForm.tsx');
   assert.match(loginPage, /compact/);
-  assert.match(shell, /compact \? 'lg:py-6'/);
+  assert.match(shell, /const dense = compact \|\| fitViewport/);
+  assert.match(shell, /dense \? 'lg:py-6'/);
   assert.match(loginForm, /className="space-y-4"/);
 });
 
@@ -30,7 +31,9 @@ test('registration memakai fit-to-viewport pada desktop pendek', () => {
   assert.match(registerPage, /fitViewport/);
   assert.match(shell, /auth-shell--fit-viewport/);
   assert.match(register, /register-form flex flex-col/);
-  assert.match(globals, /max-height: 900px/);
+  assert.match(shell, /const dense = compact \|\| fitViewport/);
+  assert.match(globals, /height: 100dvh/);
+  assert.match(globals, /overflow: hidden/);
   assert.match(globals, /max-height: 760px/);
   assert.match(globals, /register-form-trial/);
 });
