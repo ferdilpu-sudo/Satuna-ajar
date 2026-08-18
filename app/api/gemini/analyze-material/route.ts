@@ -6,6 +6,7 @@ import { generateContentWithRetry } from "@/lib/gemini";
 import { Type } from "@google/genai";
 import { extractWebGrounding } from "@/lib/gemini-grounding";
 import { extractUrlsFromText } from "@/lib/export/source-section";
+import { resolveMaterialFileParts } from "@/lib/material-files/server";
 import { normalizeEducationLevel, normalizeGrade, normalizePhase } from "@/lib/validation";
 import { checkIpRateLimit, rateLimitResponse } from '@/lib/server/rate-limit';
 
@@ -17,7 +18,7 @@ export async function POST(req: NextRequest) {
     const { typedText, fileData, notes, useWebResearch = true, identityContext } = body;
     const webResearchEnabled = Boolean(useWebResearch);
 
-    let parts: any[] = [];
+    const parts: any[] = await resolveMaterialFileParts(fileData);
 
     // System instruction for pedagogical material analysis
     const systemInstruction = `Anda adalah pakar kurikulum Kurikulum Merdeka dan Pembelajaran Mendalam (Deep Learning).
@@ -52,19 +53,6 @@ IDENTITAS TARGET RPP:
 - Jika identitas target diberikan oleh guru, gunakan Mata Pelajaran, Jenjang, Kelas, Fase, Elemen, Topik, dan Subtopik sebagai konteks utama untuk membatasi analisis dan kueri riset web.
 - Identitas target adalah pilihan pengguna dan JANGAN ditimpa oleh hasil deteksi dokumen. Field detectedLevel/detectedGrade/detectedPhase/detectedSubject tetap menggambarkan SASARAN SUMBER yang terdeteksi agar aplikasi dapat menampilkan konflik bila sumber berbeda dengan target RPP.
 - Jangan mengadaptasi materi lintas kelas/fase secara diam-diam.`;
-
-    if (fileData && Array.isArray(fileData)) {
-      for (const file of fileData) {
-        parts.push({ text: `[Nama File Sumber: ${file.name || "tanpa nama"}]` });
-        if (file.text && typeof file.text === "string") {
-          parts.push({ text: `[Isi File: ${file.name}]\n${file.text}` });
-          continue;
-        }
-        if (file.base64 && (file.mimeType === "application/pdf" || file.mimeType?.startsWith("image/"))) {
-          parts.push({ inlineData: { mimeType: file.mimeType, data: file.base64 } });
-        }
-      }
-    }
 
     if (typedText && typedText.trim()) {
       parts.push({
@@ -204,8 +192,7 @@ IDENTITAS TARGET RPP:
         .trim();
     }
     const grounding = extractWebGrounding(response);
-    
-    // Also extract URLs from source text/notes to ensure user-provided links are never lost
+
     const textUrls = extractUrlsFromText(`${typedText || ''} ${notes || ''} ${JSON.stringify(fileData || [])} ${resultText}`);
     const mergedSources = [...grounding.sources];
     const seenUrls = new Set(mergedSources.map((s) => s.url));
@@ -221,7 +208,6 @@ IDENTITAS TARGET RPP:
     analysis.webSearchQueries = grounding.queries;
     analysis.searchEntryPointHtml = grounding.searchEntryPointHtml;
 
-    // Fallback file name detection if AI didn't catch explicit patterns
     if (fileData && Array.isArray(fileData)) {
       const fileNames = fileData.map((f: any) => f.name || '').join(' ').toUpperCase();
       if (!analysis.detectedGrade) {
@@ -250,8 +236,6 @@ IDENTITAS TARGET RPP:
       }
     }
 
-
-    // Fallback keyword check for law regulations or statutes
     const fullSourceText = `${typedText || ''} ${JSON.stringify(fileData || [])} ${JSON.stringify(analysis || {})}`;
     if (/\b(uu|undang-undang|pasal|sanksi|pidana|denda|peraturan|keputusan Presiden|uu no\.)\b/i.test(fullSourceText)) {
       analysis.sensitiveContentType = 'LAW';
