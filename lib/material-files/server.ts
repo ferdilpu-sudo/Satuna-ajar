@@ -21,7 +21,10 @@ export async function resolveMaterialFileParts(fileData: unknown): Promise<any[]
   if (!Array.isArray(fileData)) return [];
 
   const parts: any[] = [];
-  const storedFiles = fileData.filter((file): file is MaterialFilePayload => Boolean(file && typeof file === 'object' && typeof file.storagePath === 'string'));
+  const storedFiles = fileData.filter((file): file is MaterialFilePayload => {
+    if (!file || typeof file !== 'object') return false;
+    return typeof (file as MaterialFilePayload).storagePath === 'string';
+  });
   let supabase: Awaited<ReturnType<typeof createClient>> | null = null;
   let userId: string | null = null;
 
