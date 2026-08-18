@@ -47,7 +47,7 @@ test('purchase UI redirects unauthenticated buyers to login and disables payment
   const pricing = read('app/pricing/page.tsx');
   assert.match(button, /response\.status === 401/);
   assert.match(button, /\/login\?next=/);
-  assert.match(button, /disabled=!checkoutEnabled \|\| loading/);
+  assert.match(button, /disabled=\{!checkoutEnabled \|\| loading\}/);
   assert.match(button, /Menunggu payment gateway/);
   assert.match(pricing, /getPaymentRuntimeStatus/);
   assert.match(pricing, /PurchaseButton/);
