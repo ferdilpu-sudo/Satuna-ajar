@@ -6,8 +6,11 @@ Satuna memakai payment core provider-agnostic. iPaymu dan Midtrans menjadi adapt
 
 - Katalog produk tersimpan di `public.plans`.
 - Halaman `/pricing` membaca harga dari database, bukan konstanta frontend.
+- `/pricing` sudah memiliki UI pembelian per paket dan otomatis menonaktifkan pembayaran selama provider belum siap.
+- `POST /api/billing/checkout` menjadi endpoint checkout provider-agnostic dan selalu mewajibkan session user.
 - `checkout_orders` menyimpan snapshot harga saat checkout dibuat.
-- Checkout memakai idempotency key per user.
+- Checkout memakai idempotency key per user; UI menyimpan key di `sessionStorage` dan memakainya kembali saat retry.
+- Browser hanya mengirim `planCode` + `idempotencyKey`. Nominal checkout selalu diambil server dari `public.plans`.
 - Webhook disimpan di `payment_webhook_events` dan dideduplikasi berdasarkan `(provider, provider_event_id)`.
 - Payment sukses membuat entitlement one-time sesuai `generation_quota` plan.
 - Payment subscription sukses membuat subscription aktif dengan periode terbatas.
@@ -32,6 +35,27 @@ SATUNA_PAYMENT_PROVIDER="midtrans"
 ```
 
 Credential provider harus selalu server-only dan tidak boleh menggunakan prefix `NEXT_PUBLIC_`.
+
+`lib/payment/provider-registry.ts` menjadi satu-satunya tempat untuk mendaftarkan adapter provider yang sudah siap. Selama registry belum memiliki adapter untuk provider terkonfigurasi, checkout tetap dianggap belum tersedia.
+
+## Checkout flow
+
+```text
+/pricing
+  -> PurchaseButton
+  -> POST /api/billing/checkout
+  -> verifikasi session
+  -> validasi planCode + idempotencyKey
+  -> resolve provider aktif dari provider registry
+  -> create_checkout_order(planCode, idempotencyKey)
+  -> PaymentProvider.createCheckout(...)
+  -> assign_checkout_provider(...)
+  -> redirect browser ke checkoutUrl provider
+```
+
+Jika user belum login, endpoint mengembalikan `401 AUTH_REQUIRED` dan UI mengarahkan ke `/login?next=/pricing`.
+
+Jika provider belum dikonfigurasi selama review, endpoint mengembalikan `503 PAYMENT_GATEWAY_REVIEW_PENDING`. Jika provider sudah dipilih tetapi adapter belum didaftarkan, endpoint mengembalikan `503 PAYMENT_PROVIDER_ADAPTER_UNAVAILABLE`.
 
 ## Migration
 
@@ -66,6 +90,8 @@ Jika proses AI gagal, reservation berbayar difinalisasi sebagai gagal. Untuk one
 
 `create_checkout_order` hanya dapat dieksekusi role `authenticated` dan selalu mengambil harga dari `public.plans`. Client tidak pernah mengirim nominal yang dipercaya server.
 
+`POST /api/billing/checkout` melakukan autentikasi sebelum order dibuat. Provider juga di-resolve sebelum `prepareCheckout()`, sehingga klik tombol selama provider belum siap tidak membuat orphan checkout order.
+
 `reserve_paid_generation` dan `finalize_paid_generation` hanya bekerja untuk `auth.uid()` dari session pengguna. User tidak dapat memilih entitlement atau subscription milik user lain.
 
 `assign_checkout_provider` dan `finalize_checkout_payment` hanya dapat dieksekusi `service_role`. Signature webhook tetap harus diverifikasi oleh adapter provider sebelum event diberikan ke `finalizeVerifiedPayment()`.
@@ -76,8 +102,8 @@ Setelah salah satu merchant disetujui:
 
 1. Implement `PaymentProvider.createCheckout()` untuk provider tersebut.
 2. Implement `PaymentProvider.verifyWebhook()` sesuai signature resmi provider.
-3. Tambahkan route checkout yang memanggil `prepareCheckout()`, provider adapter, lalu `attachProviderCheckout()`.
+3. Daftarkan adapter pada `lib/payment/provider-registry.ts`.
 4. Tambahkan webhook route yang memverifikasi signature lalu memanggil `finalizeVerifiedPayment()`.
-5. Uji Sandbox: sukses, gagal, expired, webhook duplikat, webhook out-of-order, amount mismatch, dan retry checkout.
+5. Uji Sandbox: sukses, gagal, expired, webhook duplikat, webhook out-of-order, amount mismatch, retry checkout, dan return browser.
 
 Recurring renewal subscription belum diproses sebagai flow terpisah. Detail renewal harus mengikuti kemampuan provider yang akhirnya lolos review dan tidak boleh diasumsikan sama antara iPaymu dan Midtrans.
