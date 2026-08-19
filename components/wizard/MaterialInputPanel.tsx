@@ -51,12 +51,15 @@ export default function MaterialInputPanel(props: Props) {
         )}
 
         <div className="flex flex-col gap-2 border-t border-[#E6EAE5] bg-white/80 px-3 py-3 sm:flex-row sm:items-center sm:justify-between">
-          <label className="inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-xl border border-[#DDE3DC] bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:border-blue-300 hover:bg-blue-50/40">
-            <FilePlus2 className="h-4 w-4 text-blue-600" />
-            Lampirkan file
-            <span className="font-normal text-slate-400">opsional</span>
-            <input type="file" multiple className="hidden" accept=".pdf,.docx,.txt,image/*" onChange={props.onFileUpload} />
-          </label>
+          <div>
+            <label className="inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-xl border border-[#DDE3DC] bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:border-blue-300 hover:bg-blue-50/40">
+              <FilePlus2 className="h-4 w-4 text-blue-600" />
+              Lampirkan file
+              <span className="font-normal text-slate-400">opsional</span>
+              <input type="file" multiple className="hidden" accept=".pdf,.docx,.txt,.png,.jpg,.jpeg,.webp,.gif" onChange={props.onFileUpload} />
+            </label>
+            <p className="mt-1 text-[10px] text-slate-400">PDF/gambar maksimum 15 MB per file.</p>
+          </div>
           <label className="flex min-h-10 cursor-pointer items-center gap-2 rounded-xl px-2 text-[11px] font-semibold text-slate-600">
             <input type="checkbox" checked={props.useWebResearch} onChange={(event) => props.onUseWebResearchChange(event.target.checked)} className="h-4 w-4 rounded border-slate-300 accent-blue-600" />
             <Globe2 className="h-4 w-4 text-blue-600" />

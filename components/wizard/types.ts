@@ -2,6 +2,8 @@ export interface UploadedMaterialFile {
   name: string;
   size: number;
   mimeType: string;
+  file?: File;
+  storagePath?: string;
   base64?: string;
   text?: string;
 }

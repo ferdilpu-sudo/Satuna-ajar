@@ -4,6 +4,8 @@ import { useMemo, useState } from 'react';
 import mammoth from 'mammoth';
 import type { LearningSettings, MaterialAnalysis, OutputConfig, SchoolIdentity, SelectedDimension } from '../types/rpp';
 import { getUserSettings } from '../lib/storage';
+import { removeStoredMaterial, uploadMaterialBinary } from '../lib/material-files/browser';
+import { MAX_MATERIAL_FILE_BYTES, isSupportedBinaryMaterialMime, materialFileSizeLabel } from '../lib/material-files/config';
 import {
   expectedPhaseForGrade,
   normalizeEducationLevel,
@@ -129,12 +131,9 @@ export default function WizardForm({ onGenerateSubmit, presetTemplateModel }: Wi
         if (previous.elementSource && previous.elementSource !== 'manual') { updated.element = ''; updated.elementSource = 'manual'; }
       }
 
-      // Auto-adjust Phase & Level when Grade changes
       if (field === 'grade' && typeof value === 'string') {
         const expectedPhase = expectedPhaseForGrade(value);
-        if (expectedPhase) {
-          updated.phase = expectedPhase;
-        }
+        if (expectedPhase) updated.phase = expectedPhase;
         const gradeNumber = parseGradeNumber(value);
         if (gradeNumber) {
           if (gradeNumber <= 6 && (!previous.educationLevel || previous.educationLevel === 'SMP/MTs' || previous.educationLevel === 'SMA/MA')) {
@@ -150,7 +149,6 @@ export default function WizardForm({ onGenerateSubmit, presetTemplateModel }: Wi
         }
       }
 
-      // Auto-adjust duration when Education Level changes directly
       if (field === 'educationLevel' && typeof value === 'string') {
         if (value === 'SD/MI') updated.durationPerJP = 35;
         else if (value === 'SMP/MTs') updated.durationPerJP = 40;
@@ -164,8 +162,11 @@ export default function WizardForm({ onGenerateSubmit, presetTemplateModel }: Wi
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
+    setAnalysisError(null);
+
     for (const file of files) {
-      const mimeType = file.type || 'application/octet-stream';
+      const isPdf = file.name.toLowerCase().endsWith('.pdf');
+      const mimeType = file.type || (isPdf ? 'application/pdf' : 'application/octet-stream');
       if (file.name.toLowerCase().endsWith('.docx')) {
         try {
           const result = await mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() });
@@ -176,29 +177,64 @@ export default function WizardForm({ onGenerateSubmit, presetTemplateModel }: Wi
       } else if (mimeType.startsWith('text/') || file.name.toLowerCase().endsWith('.txt')) {
         const textContent = await file.text();
         setUploadedFiles((prev) => [...prev, { name: file.name, size: file.size, mimeType: 'text/plain', text: textContent }]);
+      } else if (!isSupportedBinaryMaterialMime(mimeType)) {
+        setAnalysisError(`Format ${file.name} belum didukung. Gunakan PDF, PNG, JPG, WEBP, GIF, DOCX, atau TXT.`);
+      } else if (file.size > MAX_MATERIAL_FILE_BYTES) {
+        setAnalysisError(`Ukuran ${file.name} melebihi batas ${materialFileSizeLabel()} per file.`);
       } else {
-        const base64 = await readFileAsBase64(file);
-        setUploadedFiles((prev) => [...prev, { name: file.name, size: file.size, mimeType, base64 }]);
+        setUploadedFiles((prev) => [...prev, { name: file.name, size: file.size, mimeType, file }]);
       }
     }
     event.target.value = '';
   };
 
   const handleAnalyzeMaterial = async () => {
-    setIsAnalyzing(true); setAnalysisError(null);
+    if (isAnalyzing) return;
+    setIsAnalyzing(true);
+    setAnalysisError(null);
+    const temporaryStoragePaths: string[] = [];
+
     try {
+      const requestFiles = [];
+      for (const file of uploadedFiles) {
+        if (file.file) {
+          const stored = await uploadMaterialBinary(file.file);
+          temporaryStoragePaths.push(stored.storagePath);
+          requestFiles.push({
+            name: file.name,
+            size: file.size,
+            mimeType: stored.mimeType,
+            storagePath: stored.storagePath,
+          });
+        } else {
+          requestFiles.push({
+            name: file.name,
+            size: file.size,
+            mimeType: file.mimeType,
+            text: file.text,
+            storagePath: file.storagePath,
+          });
+        }
+      }
+
       const response = await fetch('/api/gemini/analyze-material', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ typedText: typedMaterial, fileData: uploadedFiles, notes: aiNotes, useWebResearch, identityContext: { educationLevel: identity.educationLevel, subject: identity.subject, grade: identity.grade, phase: identity.phase, element: identity.element, topic: identity.topic, subtopic: identity.subtopic } }),
+        body: JSON.stringify({ typedText: typedMaterial, fileData: requestFiles, notes: aiNotes, useWebResearch, identityContext: { educationLevel: identity.educationLevel, subject: identity.subject, grade: identity.grade, phase: identity.phase, element: identity.element, topic: identity.topic, subtopic: identity.subtopic } }),
       });
-      const data = await response.json();
+      const data = await response.json().catch(() => ({} as { error?: string }));
+      if (response.status === 413) {
+        throw new Error(data.error || `Lampiran terlalu besar untuk dianalisis. Maksimum ${materialFileSizeLabel()} per file.`);
+      }
       if (!response.ok) throw new Error(data.error || 'Gagal menganalisis materi.');
       const analysis = data.analysis as MaterialAnalysis;
       setAnalysisResult(analysis);
       applyAnalysisToIdentity(analysis);
     } catch (error) {
       setAnalysisError(error instanceof Error ? error.message : 'Terjadi kesalahan saat menganalisis materi.');
-    } finally { setIsAnalyzing(false); }
+    } finally {
+      await Promise.all(temporaryStoragePaths.map((path) => removeStoredMaterial(path)));
+      setIsAnalyzing(false);
+    }
   };
 
   const applyAnalysisToIdentity = (analysis: MaterialAnalysis) => {
@@ -287,13 +323,4 @@ export default function WizardForm({ onGenerateSubmit, presetTemplateModel }: Wi
       </div>
     </div>
   );
-}
-
-function readFileAsBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = () => reject(new Error(`Gagal membaca ${file.name}`));
-    reader.onload = () => resolve(String(reader.result || '').split(',')[1] || '');
-    reader.readAsDataURL(file);
-  });
 }

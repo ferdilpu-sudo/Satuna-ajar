@@ -9,6 +9,17 @@ export interface AdminMetric {
   helper: string;
 }
 
+export interface AdminOverviewMetrics {
+  totalUsers: number;
+  activeSubscriptions: number;
+  monthRevenue: number;
+  monthOneTimeRevenue: number;
+  mrr: number;
+  generations30d: number;
+  failedGenerations30d: number;
+  aiCost30d: number;
+}
+
 export interface RevenuePoint {
   label: string;
   revenue: number;
@@ -55,6 +66,19 @@ export interface PaymentRow {
   provider: string;
   kind: PaymentKind;
   item: string;
+}
+
+export interface AdminCommerceData {
+  activeSubscriptions: number;
+  oneTimeTransactions30d: number;
+  oneTimeBuyers30d: number;
+  unusedGenerationRights: number;
+  monthRevenue: number;
+  recurringRevenue: number;
+  oneTimeRevenue: number;
+  subscriptions: SubscriptionRow[];
+  oneTimePurchases: OneTimePurchaseRow[];
+  payments: PaymentRow[];
 }
 
 export interface SystemAlert {

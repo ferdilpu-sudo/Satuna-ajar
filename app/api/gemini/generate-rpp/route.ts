@@ -10,10 +10,14 @@ import { repairAssessmentQuestions } from './assessment-repair';
 import { buildRPPData } from './post-process';
 import { buildSystemInstruction, buildUserPrompt } from './prompt';
 import { responseSchemaForOutput } from './schema';
-import { reserveTrialGeneration, trialDeniedResponse, type TrialReservation } from '../../../../lib/server/trial-guard';
+import {
+  generationAccessDeniedResponse,
+  reserveGenerationAccess,
+  type GenerationAccessReservation,
+} from '../../../../lib/server/generation-access';
 
 export async function POST(req: NextRequest) {
-  let trialReservation: TrialReservation | null = null;
+  let generationReservation: GenerationAccessReservation | null = null;
   try {
     const body = await req.json();
     const { materialAnalysis, identity: rawIdentity, settings, selectedDimensions, outputConfig, sourceFiles = [] } = body;
@@ -39,15 +43,15 @@ export async function POST(req: NextRequest) {
       }, { status: 422 });
     }
 
-    trialReservation = await reserveTrialGeneration(req);
-    if (!trialReservation.allowed) return trialDeniedResponse(trialReservation);
+    generationReservation = await reserveGenerationAccess(req);
+    if (!generationReservation.allowed) return generationAccessDeniedResponse(generationReservation);
 
     const dimensions = selectedDimensions || [];
     const pedagogicalPlan = await generatePedagogicalPlan({ materialAnalysis, identity, settings, selectedDimensions: dimensions, outputConfig });
     const planValidation = validatePedagogicalPlan(pedagogicalPlan);
     if (!planValidation.valid) {
-      await trialReservation.release();
-      trialReservation = null;
+      await generationReservation.release({ model: 'gemini-3.6-flash' });
+      generationReservation = null;
       return NextResponse.json({
         error: 'Blueprint pedagogis AI belum konsisten. Silakan generate ulang.',
         code: 'PEDAGOGICAL_PLAN_INVALID',
@@ -96,11 +100,21 @@ export async function POST(req: NextRequest) {
     }
 
     const rppData = buildRPPData({ parsed, identity, settings, materialAnalysis, selectedDimensions: dimensions, outputConfig, sourceFiles, pedagogicalPlan });
-    const successResponse = NextResponse.json({ rppData, warnings: preValidation.warnings, trial: trialReservation.usage });
-    return trialReservation.attach(successResponse);
+    await generationReservation.complete({ model: 'gemini-3.6-flash' });
+    const successResponse = NextResponse.json({
+      rppData,
+      warnings: preValidation.warnings,
+      trial: generationReservation.trial.usage,
+      generationAccess: { source: generationReservation.source },
+    });
+    return generationReservation.attach(successResponse);
   } catch (error: any) {
-    if (trialReservation?.allowed) {
-      try { await trialReservation.release(); } catch (releaseError) { console.error('Failed to rollback trial reservation:', releaseError); }
+    if (generationReservation?.allowed) {
+      try {
+        await generationReservation.release({ model: 'gemini-3.6-flash' });
+      } catch (releaseError) {
+        console.error('Failed to rollback generation reservation:', releaseError);
+      }
     }
     console.error('Error generating learning document:', error);
     const statusCode = error?.statusCode || (error?.isQuota ? 429 : 500);
