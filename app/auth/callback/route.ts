@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
 function safeNext(value: string | null): string {
-  return value?.startsWith('/') && !value.startsWith('//') ? value : '/';
+  return value?.startsWith('/') && !value.startsWith('//') ? value : '/workspace';
 }
 
 function getRedirectOrigin(request: Request, fallbackOrigin: string): string {
