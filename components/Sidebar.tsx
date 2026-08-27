@@ -1,6 +1,8 @@
 'use client';
 
+import Link from 'next/link';
 import React from 'react';
+import { WalletCards } from 'lucide-react';
 import StreamlineDuotoneIcon, { type StreamlineIconName } from './icons/StreamlineDuotoneIcon';
 import SatunaMark from './SatunaMark';
 import { BRAND } from '@/lib/brand';
@@ -53,6 +55,17 @@ export default function Sidebar({ currentTab, onTabChange, isOpen, onCloseMobile
               </button>
             );
           })}
+
+          <div className="my-2 border-t border-[#E6EAE5]" />
+          <Link
+            href="/pricing"
+            onClick={onCloseMobile}
+            className="flex min-h-11 w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-left text-sm font-semibold text-slate-600 transition-colors hover:bg-blue-50 hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+          >
+            <WalletCards className="h-5 w-5 shrink-0 text-blue-600" />
+            <span className="flex-1">Paket & Harga</span>
+            <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-extrabold text-blue-700">Rp7rb+</span>
+          </Link>
         </nav>
 
         <details className="mx-3 mb-3 rounded-xl border border-[#E6EAE5] bg-[#F8FAF7] px-3 py-2.5 text-[11px] text-slate-600">
