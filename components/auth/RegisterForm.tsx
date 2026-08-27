@@ -21,7 +21,7 @@ export default function RegisterForm() {
     setNotice('');
     try {
       const supabase = createClient();
-      const redirectTo = `${window.location.origin}/auth/callback?next=/`;
+      const redirectTo = `${window.location.origin}/auth/callback?next=/workspace`;
       const { error } = await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo } });
       if (error) setNotice(friendlyAuthError(error.message));
     } catch (error) {
@@ -57,12 +57,12 @@ export default function RegisterForm() {
         password,
         options: {
           data: { full_name: name },
-          emailRedirectTo: `${window.location.origin}/auth/callback?next=/`,
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=/workspace`,
         },
       });
       if (error) return setNotice(friendlyAuthError(error.message));
       if (authData.session) {
-        router.replace('/');
+        router.replace('/workspace');
         router.refresh();
         return;
       }
