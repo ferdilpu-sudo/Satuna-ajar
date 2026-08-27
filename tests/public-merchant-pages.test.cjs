@@ -6,9 +6,28 @@ function read(path) { return fs.readFileSync(path, 'utf8'); }
 
 test('merchant verification pages and billing catalog are public', () => {
   const middleware = read('lib/supabase/middleware.ts');
-  for (const path of ['/pricing', '/syarat-ketentuan', '/kebijakan-refund', '/kebijakan-privasi', '/faq', '/kontak', '/api/billing/plans']) {
-    assert.match(middleware, new RegExp(path.replace('/', '\\/')));
+  for (const path of ['/', '/pricing', '/syarat-ketentuan', '/kebijakan-refund', '/kebijakan-privasi', '/faq', '/kontak', '/api/billing/plans']) {
+    assert.match(middleware, new RegExp(path === '/' ? "'/'" : path.replace('/', '\\/')));
   }
+});
+
+test('homepage is a public merchant landing page with direct verification links', () => {
+  const home = read('app/page.tsx');
+  assert.match(home, /Paket & Harga/);
+  assert.match(home, /href="\/pricing"/);
+  assert.match(home, /href="\/faq"/);
+  assert.match(home, /href="\/kontak"/);
+  assert.match(home, /Informasi merchant/);
+  assert.match(home, /Transaksi dalam Rupiah \(IDR\)/);
+});
+
+test('authenticated product workspace lives on a separate protected route', () => {
+  const workspace = read('app/workspace/page.tsx');
+  const middleware = read('lib/supabase/middleware.ts');
+  assert.match(workspace, /DashboardView/);
+  assert.match(workspace, /WizardForm/);
+  assert.doesNotMatch(middleware, /['"]\/workspace['"],/);
+  assert.match(middleware, /new URL\('\/workspace'/);
 });
 
 test('required merchant policy pages exist with business-specific content', () => {
