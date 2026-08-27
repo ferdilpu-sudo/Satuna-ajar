@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { getAuthMode, hasSupabaseEnv } from '@/lib/auth/config';
 
 const PUBLIC_PATHS = [
+  '/',
   '/login',
   '/daftar',
   '/lupa-kata-sandi',
@@ -68,7 +69,7 @@ export async function updateSession(request: NextRequest): Promise<NextResponse>
   const authenticated = Boolean(!error && data?.claims?.sub);
 
   if (authenticated && ['/login', '/daftar'].includes(request.nextUrl.pathname)) {
-    return NextResponse.redirect(new URL('/', request.url));
+    return NextResponse.redirect(new URL('/workspace', request.url));
   }
   if (!authenticated && mode === 'enforce' && !publicPath) return unauthenticatedResponse(request);
 
