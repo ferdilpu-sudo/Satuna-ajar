@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, CheckCircle2, FileText, Sparkles, Upload, WalletCards } from 'lucide-react';
+import { ArrowRight, FileText, Sparkles, Upload, WalletCards } from 'lucide-react';
 import SatunaMark from '@/components/SatunaMark';
 import { BRAND } from '@/lib/brand';
 import { PUBLIC_LINKS } from '@/lib/public-site';
@@ -7,19 +7,25 @@ import { PUBLIC_LINKS } from '@/lib/public-site';
 const FEATURES = [
   {
     icon: Upload,
-    title: 'Analisis materi',
-    description: 'Gunakan teks, PDF, DOCX, TXT, atau gambar sebagai bahan penyusunan perangkat ajar.',
+    title: 'Mulai dari materi yang Anda punya',
+    description: 'Masukkan topik atau lampirkan materi. Satuna Ajar membantu mengolahnya menjadi dasar penyusunan perangkat ajar.',
   },
   {
     icon: Sparkles,
-    title: 'RPP & Modul Ajar dengan AI',
-    description: 'Susun tujuan, kegiatan pembelajaran, asesmen, rubrik, dan komponen pendukung secara terstruktur.',
+    title: 'Susun RPP dan Modul Ajar lebih cepat',
+    description: 'AI membantu menyiapkan tujuan, kegiatan pembelajaran, asesmen, rubrik, dan komponen penting lainnya secara terstruktur.',
   },
   {
     icon: FileText,
-    title: 'Edit & ekspor',
-    description: 'Tinjau hasil, lakukan penyuntingan, lalu ekspor dokumen ke DOCX/PDF untuk digunakan atau dicetak.',
+    title: 'Tinjau, edit, lalu gunakan',
+    description: 'Hasil tetap dapat Anda periksa dan sunting sebelum diekspor ke DOCX atau PDF.',
   },
+] as const;
+
+const STEPS = [
+  ['1', 'Masukkan materi dan konteks', 'Pilih jenis dokumen, isi kebutuhan pembelajaran, lalu tambahkan materi atau topik.'],
+  ['2', 'Biarkan AI membantu menyusun', 'Satuna Ajar menyiapkan struktur perangkat ajar berdasarkan informasi yang Anda berikan.'],
+  ['3', 'Tinjau dan ekspor', 'Periksa hasil, lakukan penyesuaian, lalu unduh dokumen yang siap digunakan.'],
 ] as const;
 
 export default function LandingPage() {
@@ -35,10 +41,10 @@ export default function LandingPage() {
             </div>
           </Link>
 
-          <nav className="hidden items-center gap-5 text-sm font-bold text-slate-600 md:flex" aria-label="Navigasi publik">
+          <nav className="hidden items-center gap-5 text-sm font-bold text-slate-600 md:flex" aria-label="Navigasi utama">
+            <Link href="#fitur" className="hover:text-blue-700">Fitur</Link>
             <Link href="/pricing" className="hover:text-blue-700">Paket & Harga</Link>
             <Link href="/faq" className="hover:text-blue-700">FAQ</Link>
-            <Link href="/kontak" className="hover:text-blue-700">Kontak</Link>
           </nav>
 
           <div className="flex items-center gap-2">
@@ -57,13 +63,13 @@ export default function LandingPage() {
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-extrabold text-blue-700">
               <Sparkles className="h-3.5 w-3.5" />
-              Ruang kerja digital untuk guru
+              Asisten penyusunan perangkat ajar
             </div>
             <h1 className="mt-5 max-w-3xl text-4xl font-black tracking-tight text-slate-950 sm:text-5xl lg:text-[56px] lg:leading-[1.05]">
-              Siapkan perangkat ajar lebih cepat, tetap dalam kendali Anda.
+              RPP dan Modul Ajar, disusun lebih cepat.
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
-              Satuna Ajar membantu guru menyusun RPP Ringkas dan Modul Ajar, menganalisis materi, meninjau hasil, lalu mengekspor dokumen yang siap digunakan.
+              Mulai dari materi yang Anda punya. Satuna Ajar membantu menyusun perangkat pembelajaran yang terstruktur, mudah ditinjau, dan tetap dapat Anda edit sebelum digunakan.
             </p>
 
             <div className="mt-7 flex flex-wrap gap-3">
@@ -71,34 +77,27 @@ export default function LandingPage() {
                 Mulai gratis <ArrowRight className="h-4 w-4" />
               </Link>
               <Link href="/pricing" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-5 text-sm font-extrabold text-slate-800 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700">
-                <WalletCards className="h-4 w-4" /> Paket & Harga
+                <WalletCards className="h-4 w-4" /> Lihat paket
               </Link>
             </div>
 
-            <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-xs font-semibold text-slate-500">
-              <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-600" /> 3 generasi AI gratis</span>
-              <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-600" /> Tanpa barang fisik</span>
-              <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-600" /> Transaksi dalam Rupiah (IDR)</span>
-            </div>
+            <p className="mt-5 text-sm font-semibold text-slate-500">
+              Akun baru mendapat 3 kali generate AI gratis.
+            </p>
           </div>
 
           <div className="rounded-[28px] border border-[#DDE3DC] bg-white p-5 shadow-xl shadow-slate-900/5 sm:p-7">
             <div className="rounded-2xl border border-blue-100 bg-blue-50/70 p-5">
-              <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-blue-700">Alur layanan</p>
-              <h2 className="mt-2 text-xl font-black text-slate-950">Dari materi menjadi dokumen siap pakai</h2>
+              <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-blue-700">Cara kerja</p>
+              <h2 className="mt-2 text-xl font-black text-slate-950">Dari materi menjadi perangkat ajar</h2>
             </div>
-            <ol className="mt-5 space-y-4">
-              {[
-                ['1', 'Masukkan kebutuhan pembelajaran', 'Pilih RPP Ringkas atau Modul Ajar dan isi identitas pembelajaran.'],
-                ['2', 'Tambahkan materi', 'Lampirkan materi atau topik yang akan digunakan sebagai dasar penyusunan.'],
-                ['3', 'AI menyusun perangkat ajar', 'Sistem membantu menyusun komponen pembelajaran dan asesmen.'],
-                ['4', 'Tinjau, edit, dan ekspor', 'Periksa hasil akhir lalu unduh dalam format dokumen digital.'],
-              ].map(([number, title, description]) => (
+            <ol className="mt-5 space-y-5">
+              {STEPS.map(([number, title, description]) => (
                 <li key={number} className="flex gap-3">
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-900 text-xs font-black text-white">{number}</span>
                   <div>
                     <p className="text-sm font-extrabold text-slate-900">{title}</p>
-                    <p className="mt-0.5 text-xs leading-5 text-slate-500">{description}</p>
+                    <p className="mt-1 text-xs leading-5 text-slate-500">{description}</p>
                   </div>
                 </li>
               ))}
@@ -106,12 +105,12 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="border-y border-[#DDE3DC] bg-white">
+        <section id="fitur" className="scroll-mt-24 border-y border-[#DDE3DC] bg-white">
           <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-16">
             <div className="max-w-2xl">
-              <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-blue-700">Layanan Satuna Ajar</p>
-              <h2 className="mt-2 text-3xl font-black tracking-tight text-slate-950">Satu alur kerja untuk menyiapkan perangkat pembelajaran</h2>
-              <p className="mt-3 leading-7 text-slate-600">Produk Satuna Ajar adalah layanan digital berbasis web. Pengguna memperoleh akses melalui akun dan hasil layanan diserahkan dalam bentuk dokumen digital.</p>
+              <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-blue-700">Lebih sedikit pekerjaan berulang</p>
+              <h2 className="mt-2 text-3xl font-black tracking-tight text-slate-950">Fokus pada isi pembelajaran, bukan menyusun semuanya dari nol.</h2>
+              <p className="mt-3 leading-7 text-slate-600">Satuna Ajar membantu mempercepat bagian yang paling menyita waktu, tanpa mengambil alih keputusan akhir Anda sebagai pendidik.</p>
             </div>
 
             <div className="mt-8 grid gap-4 md:grid-cols-3">
@@ -127,27 +126,19 @@ export default function LandingPage() {
         </section>
 
         <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-16">
-          <div className="grid gap-5 lg:grid-cols-2">
-            <div className="rounded-3xl border border-blue-100 bg-blue-50/70 p-6 sm:p-8">
-              <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-blue-700">Paket layanan</p>
-              <h2 className="mt-2 text-2xl font-black text-slate-950">Harga jelas sebelum pembelian</h2>
-              <p className="mt-3 text-sm leading-7 text-slate-600">Lihat seluruh paket sekali beli dan Satuna Pro Bulanan pada halaman harga. Seluruh nominal ditampilkan dalam Rupiah (IDR).</p>
-              <Link href="/pricing" className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl bg-blue-600 px-4 text-sm font-extrabold text-white hover:bg-blue-700">
-                Lihat Paket & Harga <ArrowRight className="h-4 w-4" />
-              </Link>
+          <div className="rounded-3xl border border-blue-100 bg-blue-50/70 px-6 py-8 sm:px-8 sm:py-10 lg:flex lg:items-center lg:justify-between lg:gap-8">
+            <div className="max-w-2xl">
+              <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-blue-700">Mulai sesuai kebutuhan</p>
+              <h2 className="mt-2 text-2xl font-black text-slate-950 sm:text-3xl">Coba gratis, lanjutkan saat Anda membutuhkannya.</h2>
+              <p className="mt-3 text-sm leading-7 text-slate-600">Gunakan 3 kali generate AI gratis. Setelah itu, pilih paket sekali beli atau Satuna Pro Bulanan sesuai ritme kerja Anda.</p>
             </div>
-
-            <div className="rounded-3xl border border-[#DDE3DC] bg-white p-6 sm:p-8">
-              <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-slate-500">Informasi merchant</p>
-              <h2 className="mt-2 text-2xl font-black text-slate-950">Informasi layanan dapat diperiksa tanpa login</h2>
-              <p className="mt-3 text-sm leading-7 text-slate-600">Paket, FAQ, syarat layanan, kebijakan refund, privasi, dan kontak resmi tersedia sebagai halaman publik untuk pengguna maupun proses verifikasi payment gateway.</p>
-              <div className="mt-5 flex flex-wrap gap-2">
-                {PUBLIC_LINKS.map((item) => (
-                  <Link key={item.href} href={item.href} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-600 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700">
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
+            <div className="mt-6 flex flex-wrap gap-3 lg:mt-0 lg:shrink-0">
+              <Link href="/daftar" className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-blue-600 px-4 text-sm font-extrabold text-white hover:bg-blue-700">
+                Coba gratis <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link href="/pricing" className="inline-flex min-h-11 items-center rounded-xl border border-blue-200 bg-white px-4 text-sm font-extrabold text-blue-700 hover:bg-blue-50">
+                Lihat Paket & Harga
+              </Link>
             </div>
           </div>
         </section>
@@ -157,9 +148,9 @@ export default function LandingPage() {
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-7 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <p className="text-sm font-black text-slate-950">{BRAND.name}</p>
-            <p className="mt-1 text-xs text-slate-500">Layanan digital untuk membantu guru menyiapkan perangkat pembelajaran.</p>
+            <p className="mt-1 text-xs text-slate-500">Membantu guru menyiapkan perangkat pembelajaran dengan lebih efisien.</p>
           </div>
-          <nav className="flex flex-wrap gap-x-4 gap-y-2 text-xs font-bold text-slate-500" aria-label="Informasi merchant">
+          <nav className="flex flex-wrap gap-x-4 gap-y-2 text-xs font-bold text-slate-500" aria-label="Tautan informasi">
             {PUBLIC_LINKS.map((item) => <Link key={item.href} href={item.href} className="hover:text-blue-700">{item.label}</Link>)}
           </nav>
         </div>
