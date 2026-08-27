@@ -1,7 +1,8 @@
 'use client';
 
+import Link from 'next/link';
 import React from 'react';
-import { Menu } from 'lucide-react';
+import { Menu, WalletCards } from 'lucide-react';
 import StreamlineDuotoneIcon from './icons/StreamlineDuotoneIcon';
 import { BRAND } from '@/lib/brand';
 
@@ -55,6 +56,16 @@ export default function Header({
       </div>
 
       <div className="flex items-center gap-2 sm:gap-3">
+        <Link
+          href="/pricing"
+          aria-label="Lihat paket dan harga"
+          title="Paket & Harga"
+          className="inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-2.5 text-xs font-bold text-blue-700 transition-colors hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 sm:px-3.5 sm:text-sm"
+        >
+          <WalletCards className="h-4 w-4" />
+          <span className="hidden sm:inline">Paket & Harga</span>
+        </Link>
+
         {['dashboard', 'history', 'template', 'settings'].includes(currentTab) && (
           <button
             type="button"
