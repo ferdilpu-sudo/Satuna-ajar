@@ -9,7 +9,7 @@ import { createClient } from '@/lib/supabase/client';
 import { friendlyAuthError } from '@/lib/auth/messages';
 
 function safeNext(value: string | null): string {
-  return value?.startsWith('/') && !value.startsWith('//') ? value : '/';
+  return value?.startsWith('/') && !value.startsWith('//') ? value : '/workspace';
 }
 
 export default function LoginForm() {
@@ -17,7 +17,7 @@ export default function LoginForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [notice, setNotice] = useState('');
   const [loading, setLoading] = useState(false);
-  const [next, setNext] = useState('/');
+  const [next, setNext] = useState('/workspace');
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
